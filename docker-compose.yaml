@@ -38,4 +38,5 @@ volumes:
 #To learn more watch the video https://www.youtube.com/watch?v=pYhLEV-sRpY&t=351s
 
 # First pull wordpress from docker hub
+# Then run.... docker run --name new_wordpress -d -p 3000:80 wordpress
 #  docker run --name wordpress_site -v $(pwd):/var/www/html -d -p 8080:80 wordpress

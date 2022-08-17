@@ -1,0 +1,8 @@
+Error starting userland proxy: listen tcp [::]:3306: bind: address already in use
+
+To solve this either use:
+sudo systemctl restart docker
+
+OR
+
+Use 8080:8080 as port

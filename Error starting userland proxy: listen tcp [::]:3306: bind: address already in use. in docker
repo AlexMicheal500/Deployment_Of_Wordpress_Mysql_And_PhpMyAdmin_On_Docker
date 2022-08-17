@@ -9,3 +9,6 @@ Use 8080:8080 as port
 
 Nex Step is to connect the conatiner using the following link:
 https://phoenixnap.com/kb/mysql-docker-container
+
+Anoher way is by using:
+https://medium.com/swlh/setting-up-a-mysql-container-in-docker-1e00cde5490b

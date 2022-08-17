@@ -6,3 +6,6 @@ sudo systemctl restart docker
 OR
 
 Use 8080:8080 as port
+
+Nex Step is to connect the conatiner using the following link:
+https://phoenixnap.com/kb/mysql-docker-container

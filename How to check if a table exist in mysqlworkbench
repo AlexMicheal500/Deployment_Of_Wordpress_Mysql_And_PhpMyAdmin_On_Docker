@@ -1,0 +1,13 @@
+Select the path of the database file
+Create a schema
+Go to impor progress and import again.
+To check if the table exists, use:
+
+00:56:57 Restoring C:\Users\USER\Downloads\gasnowno_wp1-v1.sql
+Running: mysql.exe --defaults-file="C:\Users\USER\AppData\Local\Temp\tmpah_oac5o.cnf"  --protocol=tcp --host=139.177.207.91 --user=root --port=3306 --default-character-set=utf8 --comments --database=gasnownowschema  < "C:\\Users\\USER\\Downloads\\gasnowno_wp1-v1.sql"
+ERROR 1050 (42S01) at line 31: Table 'wp_actionscheduler_actions' already exists
+
+From Query, use the following:
+SELECT * FROM newschema.wp_actionscheduler_actions;
+i.e 
+

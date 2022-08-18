@@ -1,0 +1,52 @@
+After creating msql image...
+Creat mysql container using:
+docker run --name second-mysql -p 2000:2000 -e MYSQL_ROOT_PASSWORD=password -d mysql
+Create a db in MySql container using:
+docker exec -it 41f74b2b8b4e bash  (To enter the sql container)
+Connect container to database using:
+mysql -u root -p (then enter password of the mysql)
+Then show the databases you have created using:
+show databases ;
+If none is created, create one using:
+create database gasDB ;
+To know if database have been created, then we use:
+show databases ;
+Then exit to the localhost.
+The import the mysql file using:
+docker exec -i mysql-container mysql -uuser -ppassword name_db < data.sql 
+e.g.
+docker exec -i second-mysql mysql -u root -ppassword gasDB < 'gasnowno_wp1-v1 - Copy.sql'
+DOCKER DB IS READY
+
+Now run wordpress (gasnownow.tar) to be an image:
+docker load --input gasnownow.tar 
+Run: docker ps (to see gasnownow as a container).
+What the above command is for is to allow docker know that it should treat the gasnonow file as a docker image.
+
+To run the website image as a container, we use our wordpress dockerhub container run command:
+$ docker run --name some-wordpress -p 8081:80 --network some-network -d wordpress
+e.g.
+$ docker run --name gasNAME -p 8081:80 --network gas-network -d <gasnowow image>
+If you run it and find the following error, it means you need to create a network.
+docker: Error response from daemon: network gas-network not found.
+
+To create the network, we use: 
+$ docker network create gas-network
+To check list of networks, we use:
+$ docker network ls
+
+Now run the command again:
+$ docker run --name gasNAME -p 8081:80 --network gas-network -d <gasnowow image>
+
+Now connect mySQL to the network
+docker network connect <name of network> <container name>
+e.g.
+$ docker network connect gas-network second-mysql
+
+Now take the localhost IP and add the port 8082
+After entering the wordpress site, 
+Database Name = Name of Schema / Database created
+Username: username of database 
+password: password of database
+Database Host: Name of Database container
+Then submit and login.

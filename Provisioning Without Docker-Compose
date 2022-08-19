@@ -50,3 +50,20 @@ Username: username of database
 password: password of database
 Database Host: Name of Database container
 Then submit and login.
+
+Then we enter the gasnownow container using:
+$ docker exec -it 0606f62d56d5  /bin/bash
+Then we we install using:
+$ apt update
+$ apt intsall nano
+
+Then enter wp-config.php to editusing:
+nano wp-config.php
+
+Scroll down n then add the folloeing commabd and change example.com to your IP address and port.
+define('WP_HOME','http://example.com'); 
+define('WP_SITEURL','http://example.com'); 
+Then save.
+
+If page is not working after putting using ip and port, try adding /wp-login.php
+https://139.177.207.91:8082/wp-login.php

@@ -1,3 +1,5 @@
+Using the WinSCP transfer the wordpress site and the updated sql file to the server
+In the sql file, either use ctrl + \ to find https://gasnownow.ng and replace it with http://IP:port
 After creating msql image...
 Creat mysql container using:
 docker run --name second-mysql -p 2000:2000 -e MYSQL_ROOT_PASSWORD=password -d mysql
@@ -59,6 +61,9 @@ $ apt intsall nano
 
 Then enter wp-config.php to editusing:
 nano wp-config.php
+
+Check the wp config file and check/change the database name, database User,
+Database Password and Database Host which is the mysql container name
 
 Scroll down n then add the folloeing commabd and change example.com to your IP address and port.
 define('WP_HOME','http://example.com'); 

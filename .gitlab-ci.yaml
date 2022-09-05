@@ -4,7 +4,7 @@ stages:
     - deploy
 variables:
     DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_TLS_CERTDIR: ""
     TAG_LATEST: gasnownow/$CI_COMMIT_REF_NAME:latest
     TAG_COMMIT: gasnownow/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
 

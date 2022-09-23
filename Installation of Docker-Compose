@@ -1,0 +1,21 @@
+Step 1 — Installing Docker Compose
+To make sure you obtain the most updated stable version of Docker Compose, you’ll download this software from its official Github repository.
+
+First, confirm the latest version available in their releases page. At the time of this writing, the most current stable version is 1.29.2.
+
+The following command will download the 1.29.2 release and save the executable file at /usr/local/bin/docker-compose, which will make this software globally accessible as docker-compose:
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+Next, set the correct permissions so that the docker-compose command is executable:
+
+sudo chmod +x /usr/local/bin/docker-compose
+To verify that the installation was successful, you can run:
+
+docker-compose --version
+You’ll see output similar to this:
+
+Output
+docker-compose version 1.29.2, build 5becea4c
+Docker Compose is now successfully installed on your system. In the next section, you’ll see how to set up a docker-compose.yml file and get a containerized environment up and running with this tool.
+
+TO LEARN MORE VISIT https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04

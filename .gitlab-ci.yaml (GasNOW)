@@ -1,0 +1,98 @@
+stages:
+    - build
+    - push
+    - deploy
+variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    SERVER_USER: root
+    SERVER_IP: 139.177.200.220
+
+
+build:
+    stage: build    
+    image: docker:20.10.13-alpine3.15
+    services:
+        - docker:20.10.13-dind-alpine3.15
+    script:
+        - echo "$(CI_JOB_STAGE)"
+        - docker build -t gasnownow .
+        - docker save gasnownow > gasnownow.tar
+    artifacts:
+        expire_in: 1 week
+        paths:
+            - gasnownow.tar
+
+
+push:
+    stage: push
+    image: docker:20.10.13-alpine3.15
+    services:
+        - docker:20.10.13-dind-alpine3.15
+    before_script:
+     
+        - 'command -v ssh-agent >/dev/null || ( apk update && apk add openssh-client )'
+
+        ##
+        ## Run ssh-agent (inside the build environment)
+        ##
+        - eval $(ssh-agent -s)
+
+        ##
+        ## Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+        ## We're using tr to fix line endings which makes ed25519 keys work
+        ## without extra base64 encoding.
+        ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
+        ##
+        - chmod 600 $SSH_PRIVATE_KEY
+        - ssh-add $SSH_PRIVATE_KEY
+
+        ##
+        ## Create the SSH directory and give it the right permissions
+        ##
+        - mkdir -p ~/.ssh
+        - chmod 700 ~/.ssh
+
+    script:
+        - scp -o StrictHostKeyChecking=no gasnownow.tar $SERVER_USER@$SERVER_IP:./
+
+deploy:
+  #image: alpine
+    stage: deploy
+    image: docker:20.10.13-alpine3.15
+    services:
+        - docker:20.10.13-dind-alpine3.15
+    before_script:
+     
+        - 'command -v ssh-agent >/dev/null || ( apk update && apk add openssh-client )'
+
+        ##
+        ## Run ssh-agent (inside the build environment)
+        ##
+        - eval $(ssh-agent -s)
+
+        ##
+        ## Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+        ## We're using tr to fix line endings which makes ed25519 keys work
+        ## without extra base64 encoding.
+        ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
+        ##
+        - chmod 600 $SSH_PRIVATE_KEY
+        - ssh-add $SSH_PRIVATE_KEY
+
+        ##
+        ## Create the SSH directory and give it the right permissions
+        ##
+        - mkdir -p ~/.ssh
+        - chmod 700 ~/.ssh
+
+    script:
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker load --input gasnownow.tar"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d -p 1800:80 --name gasnownow_web gasnownow"
+        #- pwd
+        #- unzip gasnownow.zip
+
+
+
+
+    

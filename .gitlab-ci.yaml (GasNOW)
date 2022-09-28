@@ -7,6 +7,7 @@ variables:
     DOCKER_TLS_CERTDIR: ""
     SERVER_USER: root
     SERVER_IP: 139.177.200.220
+    USER_PASS: password
 
 
 build:
@@ -48,13 +49,14 @@ push:
         - ssh-add $SSH_PRIVATE_KEY
 
         ##
-        ## Create the SSH directory and give it the right permissions
+        ### Create the SSH directory and give it the right permissions
         ##
         - mkdir -p ~/.ssh
         - chmod 700 ~/.ssh
 
     script:
         - scp -o StrictHostKeyChecking=no gasnownow.tar $SERVER_USER@$SERVER_IP:./
+        - scp -o StrictHostKeyChecking=no gasnownow_lpg22.sql  $SERVER_USER@$SERVER_IP:./
 
 deploy:
   #image: alpine
@@ -81,16 +83,25 @@ deploy:
         - ssh-add $SSH_PRIVATE_KEY
 
         ##
-        ## Create the SSH directory and give it the right permissions
+        ## Create the SSH directory & give it the right permissions
         ##
         - mkdir -p ~/.ssh
         - chmod 700 ~/.ssh
 
     script:
         - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker load --input gasnownow.tar"
-        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d -p 1800:80 --name gasnownow_web gasnownow"
-        #- pwd
-        #- unzip gasnownow.zip
+        ########################################################################################################################
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker rm -f gasnownowDBCont"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker rm -f gasnownow_web"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker network rm gasnownow-network"
+        ########################################################################################################################
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker network create gasnownow-network"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d --name gasnownow_web -p 8081:80 --network gasnownow-network -d gasnownow"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull mysql:8.0.30 && docker run --name gasnownowDBCont -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=gasnownowDB --network gasnownow-network -d mysql:8.0.30 && docker exec -i gasnownowDBCont sh -c 'exec mysql -u root -ppassword' < gasnownow_lpg22.sql" 
+        
+
+
+
 
 
 

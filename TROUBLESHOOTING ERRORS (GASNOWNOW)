@@ -1,0 +1,70 @@
+TROUBLESHOOTING 1:
+After running "
+$ docker exec -i gasnownowDBCont sh -c 'exec mysql -u root -ppassword' < gasnownow_lpg22.sql
+=> ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock' (2)
+   read unix @->/var/run/docker.sock: read: connection reset by peer
+
+$ ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker rm -f gasnownowDBCont"
+Warning: Permanently added '139.177.200.220' (ED25519) to the list of known hosts.
+Error: No such container: gasnownowDBCont
+
+docker: Error response from daemon: driver failed programming external connectivity on endpoint gasnownowDBCont (527a1ef070f12060db64d277d01d3a07bd5a62dad89a3e518b29c886669c2495): 
+Error starting userland proxy: listen tcp 0.0.0.0:3306: bind: address already in use.
+
+Error response from daemon: You cannot remove a running container 9bdc9138accb1413c6ec8c0338b8dc5247915fb093a3fc8300d66f2fb9b0f4af. Stop the container before attempting removal or force remove
+
+Error: No such container: d42e3e566b9e
+
+docker run --name gasnownowDBCont -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=gasnownowDB --network gasnownow-network -d mysql:8.0.30
+
+docker run -d --name gasnownow_web -p 8081:80 --network gasnownow-network -d gasnownow
+
+root@localhost:~# docker exec -i gasnownowDBCont sh -c 'exec mysql -u root -ppassword' < gasnownow_lpg22.sql
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1046 (3D000) at line 31: No database selected
+read unix @->/var/run/docker.sock: read: connection reset by peer
+root@localhost:~# docker exec -it gasnownowDBCont sh -c 'exec mysql -u root -ppassword' < gasnownow_lpg22.sql
+the input device is not a TTY
+root@localhost:~# docker exec -it gasnownowDBCont /bin/bash
+bash-4.4#
+
+
+docker exec -it gasnownowDBCont bash
+mysql -u root -p password
+create database gasnownowDB;
+show databases;
+exit
+docker exec -i gasnownowDBCont mysql -u root -ppassword gasnownowDB < gasnownow_lpg22.sql
+
+HOW TO AUTHENTICATE INTO MYSQL To learn more https://www.tecmint.com/connect-to-mysql-without-root-password/
+root@localhost:~# touch .my.cnf
+root@localhost:~# nano .my.cnf
+root@localhost:~# chmod 0600 .my.cnf
+root@localhost:~# mysql -u root
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 2
+Server version: 5.7.39-0ubuntu0.18.04.2 (Ubuntu)
+
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql>
+
+HOW TO APPEND MULTIPLE LINES TO A FILE To learn more https://linuxhint.com/append-multiple-file-lines-bash/#:~:text=The%20simplest%20way%20to%20append%20multiple%20lines%20to,good%20tool%20for%20redirecting%20output%20to%20a%20file.
+echo -e "Hello, world\nBash scripting is awesome\nThis is a new line" >> multiple.txt
+
+
+To create a database in a docker container, it is suggested to connect to mysql server https://www.databasestar.com/database-docker/#ftoc-heading-7
+
+SOLUTION TO DATABASE: https://dzone.com/articles/using-docker-to-create-a-mysql-server 
+
+https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-20-04
+
+TROUBLESHOOTING: Unable to enter database
+SOLUTION: USE gasnownowDB;
+	    SHOW TABLES;

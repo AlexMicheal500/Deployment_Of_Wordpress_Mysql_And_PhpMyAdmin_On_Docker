@@ -103,10 +103,11 @@ deploy:
         - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker network create gasnownow-network"
         - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d --name gasnownow_web -p 8081:80 --network gasnownow-network -d $WORDPRESS_IMAGE"
         - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run --name gasnownowDBCont -d -p 3322:3322 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=gasnownowDB --network gasnownow-network -d mysql:8.0.30" 
-        
         #- ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "id=$(docker ps --no-trunc -aqf name=gasnownowDBCont)"
-        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker exec -i $(docker ps --no-trunc -aqf name=gasnownowDBCont) mysql -uroot -ppassword gasnownowDB < gasnownow_lpg22.sql"
-        
+        #- ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker exec -i $(docker ps --no-trunc -aqf name=gasnownowDBCont) mysql -uroot -ppassword gasnownowDB < gasnownow_lpg22.sql"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sleep 8"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker exec -i gasnownowDBCont  sh -c ' mysql -uroot -ppassword gasnownowDB' < gasnownow_lpg22.sql"
+
 
 
 

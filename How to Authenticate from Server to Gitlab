@@ -1,2 +1,6 @@
 ssh -T 
 git@gitlab.example.com
+
+E.G 
+
+ ssh -T git@gitlab.bincom.net

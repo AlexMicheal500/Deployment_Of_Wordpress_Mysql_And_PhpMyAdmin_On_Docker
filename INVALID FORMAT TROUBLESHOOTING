@@ -1,0 +1,40 @@
+Use 
+before_script:
+     
+        - 'command -v ssh-agent >/dev/null || ( apk update && apk add openssh-client && apk add mysql-server )'
+
+        ##
+        ## Run ssh-agent (inside the build environment)
+        ##
+        - eval $(ssh-agent -s)
+
+        ##
+        ## Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+        ## We're using tr to fix line endings which makes ed25519 keys work
+        ## without extra base64 encoding.
+        ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
+        ##
+        - chmod 600 $SSH_PRIVATE_KEY
+        - ssh-add $SSH_PRIVATE_KEY
+
+        ##
+        ## Create the SSH directory & give it the right permissions
+        ##
+        - mkdir -p ~/.ssh
+        - chmod 700 ~/.ssh
+     =================================================================================================   
+     OR
+     =================================================================================================
+      before_script:
+        - 'which ssh-agent || ( apk update && apk add openssh-client )'
+        - mkdir -p ~/.ssh
+        - touch ~/.ssh/id_rsa
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        - chmod 600 ~/.ssh/id_rsa
+        - echo -e "Host *\nStrictHostKeyChecking no\n" > ~/.ssh/config
+        - eval "$(ssh-agent -s)"
+        - ssh-add ~/.ssh/id_rsa
+        - chmod 700 ~/.ssh
+
+     
+     

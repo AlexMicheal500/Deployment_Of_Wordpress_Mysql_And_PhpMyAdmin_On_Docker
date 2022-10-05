@@ -23,7 +23,7 @@ before_script:
         - mkdir -p ~/.ssh
         - chmod 700 ~/.ssh
      =================================================================================================   
-     OR (AWS)
+     OR (AWS) https://stackoverflow.com/questions/52109775/gitlab-ci-ssh-key-invalid-format
      =================================================================================================
       before_script:
         - 'which ssh-agent || ( apk update && apk add openssh-client )'

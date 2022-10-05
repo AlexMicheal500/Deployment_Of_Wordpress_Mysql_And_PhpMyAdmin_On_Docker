@@ -22,6 +22,8 @@ before_script:
         ##
         - mkdir -p ~/.ssh
         - chmod 700 ~/.ssh
+        
+       The above is used when you have declared the SSH_PRIVATE_KEY variable as a file and not a variable in variables.
      =================================================================================================   
      OR (AWS) https://stackoverflow.com/questions/52109775/gitlab-ci-ssh-key-invalid-format
      =================================================================================================
@@ -35,6 +37,10 @@ before_script:
         - eval "$(ssh-agent -s)"
         - ssh-add ~/.ssh/id_rsa
         - chmod 700 ~/.ssh
+        
+        When using AWS the reason you can still get the error after using the above script above if you se the keys from the .ssh/authorization_keys.ssh/authorization_keys instead of 
+        opening the main keypair you downloaded from AWS. What is found in .ssh/authorization_keys is a public key and not a private key which is needed to be 
+        inserted in the variable SSH_PRIVATE_KEY. 
 
      
      

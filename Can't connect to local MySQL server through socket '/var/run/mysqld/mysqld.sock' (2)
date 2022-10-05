@@ -4,4 +4,4 @@ ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run
 
 SOLUTION:
 $ ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker run --name gasnownowDBCont -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=gasnownowDB --network gasnownow-network -d mysql:8.0.30" 
-$ ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sleep 8"
+$ ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sleep 50"

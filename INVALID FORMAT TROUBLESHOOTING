@@ -1,4 +1,4 @@
-Use 
+Use (LINODE)
 before_script:
      
         - 'command -v ssh-agent >/dev/null || ( apk update && apk add openssh-client && apk add mysql-server )'
@@ -23,7 +23,7 @@ before_script:
         - mkdir -p ~/.ssh
         - chmod 700 ~/.ssh
      =================================================================================================   
-     OR
+     OR (AWS)
      =================================================================================================
       before_script:
         - 'which ssh-agent || ( apk update && apk add openssh-client )'

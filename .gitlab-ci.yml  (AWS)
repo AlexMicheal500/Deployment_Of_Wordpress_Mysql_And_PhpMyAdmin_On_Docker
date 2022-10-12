@@ -6,14 +6,12 @@ variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
     SERVER_USER: ubuntu
-    SERVER_IP: 44.203.88.229
+    SERVER_IP: 18.204.201.22
     USER_PASS: password
     MY_SQL_IMAGE: mysql:8.0.30
     WORDPRESS_IMAGE: gasnownow-$CI_COMMIT_SHA
     old_url: https://gasnownow.ng
-    dev_url: http://44.203.88.229:8081
-
-
+    dev_url: https://testedweb.ddns.net/
 
 build:
     stage: build    
@@ -67,18 +65,18 @@ deploy:
         - chmod 700 ~/.ssh
     script:
         ########################################################################################################################       
-        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker rm -f gasnownowDBCont"
-        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker rm -f gasnownow_web"
-        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker network rm gasnownow-network"
-        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker rmi $MY_SQL_IMAGE"
-        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker rmi $WORDPRESS_IMAGE"
+        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker rm -f gasnownowDBCont"
+        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker rm -f gasnownow_web"
+        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker network rm gasnownow-network"
+        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker rmi $MY_SQL_IMAGE"
+        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker rmi $WORDPRESS_IMAGE"
         ########################################################################################################################
         - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker load --input gasnownow.tar"
         - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker network create gasnownow-network"
-        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker run -d --name gasnownow_web -p 8081:80 --network gasnownow-network -d $WORDPRESS_IMAGE"
+        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker run -d --name gasnownow_web -p 8080:80 --network gasnownow-network -d $WORDPRESS_IMAGE"
         - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker run --name gasnownowDBCont -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=gasnownowDB --network gasnownow-network -d mysql:8.0.30" 
         
-        #- ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "id=$(docker ps --no-trunc -aqf name=gasnownowDBCont)"
+    
         - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sleep 50"
         - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownowDBCont  sh -c ' mysql -uroot -ppassword gasnownowDB' < gasnownow_lpg22.sql"
 
@@ -91,4 +89,3 @@ deploy:
         - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'wp search-replace $old_url $dev_url gnn22_options gnn22_posts gnn22_postmeta  --allow-root'"
 
         
-

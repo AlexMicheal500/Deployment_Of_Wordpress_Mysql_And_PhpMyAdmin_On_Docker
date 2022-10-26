@@ -1,0 +1,147 @@
+root@ad1114479d9a:/var/www/html# ls
+gasnownowDBupdated.sql  readme.html      wp-blog-header.php    wp-config-sample.php  wp-cron.php        wp-load.php   wp-settings.php   xmlrpc.php
+index.php               wp-activate.php  wp-comments-post.php  wp-config.php         wp-includes        wp-login.php  wp-signup.php
+license.txt             wp-admin         wp-config-docker.php  wp-content            wp-links-opml.php  wp-mail.php   wp-trackback.php
+root@ad1114479d9a:/var/www/html# git checkout -b feature-branch
+Switched to a new branch 'feature-branch'
+root@ad1114479d9a:/var/www/html# git remote add origin https://gitlab.bincom.net:801/gasnownowv2/webapp.git
+root@ad1114479d9a:/var/www/html# git clone https://michaelalexbincom:zWE4F5vkc_H_UB5ysZZv@gitlab.bincom.net:801/gasnownowv2/webapp.git feature-branch
+Cloning into 'feature-branch'...
+remote: Enumerating objects: 103, done.
+remote: Counting objects: 100% (103/103), done.
+remote: Compressing objects: 100% (52/52), done.
+remote: Total 4246 (delta 66), reused 82 (delta 51), pack-reused 4143
+Receiving objects: 100% (4246/4246), 26.33 MiB | 6.16 MiB/s, done.
+Resolving deltas: 100% (1117/1117), done.
+root@ad1114479d9a:/var/www/html# ls
+feature-branch          readme.html         wp-comments-post.php  wp-content         wp-load.php      wp-signup.php
+gasnownowDBupdated.sql  wp-activate.php     wp-config-docker.php  wp-cron.php        wp-login.php     wp-trackback.php
+index.php               wp-admin            wp-config-sample.php  wp-includes        wp-mail.php      xmlrpc.php
+license.txt             wp-blog-header.php  wp-config.php         wp-links-opml.php  wp-settings.php
+root@ad1114479d9a:/var/www/html# cp gasnownowDBupdated.sql feature-branch
+root@ad1114479d9a:/var/www/html# ls
+feature-branch          readme.html         wp-comments-post.php  wp-content         wp-load.php      wp-signup.php
+gasnownowDBupdated.sql  wp-activate.php     wp-config-docker.php  wp-cron.php        wp-login.php     wp-trackback.php
+index.php               wp-admin            wp-config-sample.php  wp-includes        wp-mail.php      xmlrpc.php
+license.txt             wp-blog-header.php  wp-config.php         wp-links-opml.php  wp-settings.php
+root@ad1114479d9a:/var/www/html# cd feature-branch
+root@ad1114479d9a:/var/www/html/feature-branch# ls
+README.md  gasnownowDBupdated.sql
+root@ad1114479d9a:/var/www/html/feature-branch# git branch -a
+* master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/feature-branch
+  remotes/origin/main
+  remotes/origin/master
+root@ad1114479d9a:/var/www/html/feature-branch# git remote add origin https://gitlab.bincom.net:801/gasnownowv2/webapp.git
+error: remote origin already exists.
+root@ad1114479d9a:/var/www/html/feature-branch# git checkout remotes/origin/feature-branch
+Note: switching to 'remotes/origin/feature-branch'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at 585f87c Update .gitlab-ci.yml
+root@ad1114479d9a:/var/www/html/feature-branch# ls
+Dockerfile  README.md  gasnownowDBupdated.sql  gasnownow_lpg22.sql  wp-config.php  wp-content
+root@ad1114479d9a:/var/www/html/feature-branch# git config --global user.email "michaelorukpe.bincom@gmail.com
+> ^C
+root@ad1114479d9a:/var/www/html/feature-branch# git config --global user.email "michaelorukpe.bincom@gmail.com"
+root@ad1114479d9a:/var/www/html/feature-branch# git config --global user.name "michaelalexbincom"
+root@ad1114479d9a:/var/www/html/feature-branch# git config --global user.password "zWE4F5vkc_H_UB5ysZZv"
+root@ad1114479d9a:/var/www/html/feature-branch# git status
+HEAD detached at origin/feature-branch
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        gasnownowDBupdated.sql
+
+nothing added to commit but untracked files present (use "git add" to track)
+root@ad1114479d9a:/var/www/html/feature-branch# git add gasnownowDBupdated.sql
+root@ad1114479d9a:/var/www/html/feature-branch# git ststus
+git: 'ststus' is not a git command. See 'git --help'.
+
+The most similar command is
+        status
+root@ad1114479d9a:/var/www/html/feature-branch# git status
+HEAD detached at origin/feature-branch
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        new file:   gasnownowDBupdated.sql
+
+root@ad1114479d9a:/var/www/html/feature-branch# git commit -m "database"
+[detached HEAD a60a175] database
+ 1 file changed, 1179 insertions(+)
+ create mode 100644 gasnownowDBupdated.sql
+root@ad1114479d9a:/var/www/html/feature-branch# git status
+HEAD detached from origin/feature-branch
+nothing to commit, working tree clean
+root@ad1114479d9a:/var/www/html/feature-branch# git branch
+* (HEAD detached from origin/feature-branch)
+  master
+root@ad1114479d9a:/var/www/html/feature-branch# git push https://michaelalexbincom:zWE4F5vkc_H_UB5ysZZv@gitlab.bincom.net:801/gasnownowv2/webapp.git feature-branch
+error: src refspec feature-branch does not match any
+error: failed to push some refs to 'https://gitlab.bincom.net:801/gasnownowv2/webapp.git'
+root@ad1114479d9a:/var/www/html/feature-branch# git push https://michaelalexbincom:zWE4F5vkc_H_UB5ysZZv@gitlab.bincom.net:801/gasnownowv2/webapp.git
+fatal: You are not currently on a branch.
+To push the history leading to the current (detached HEAD)
+state now, use
+
+    git push https://michaelalexbincom:zWE4F5vkc_H_UB5ysZZv@gitlab.bincom.net:801/gasnownowv2/webapp.git HEAD:<name-of-remote-branch>
+
+root@ad1114479d9a:/var/www/html/feature-branch# git push
+fatal: You are not currently on a branch.
+To push the history leading to the current (detached HEAD)
+state now, use
+
+    git push origin HEAD:<name-of-remote-branch>
+
+root@ad1114479d9a:/var/www/html/feature-branch# git push origin HEAD:origin/feature-branch
+error: The destination you provided is not a full refname (i.e.,
+starting with "refs/"). We tried to guess what you meant by:
+
+- Looking for a ref that matches 'origin/feature-branch' on the remote side.
+- Checking if the <src> being pushed ('HEAD')
+  is a ref in "refs/{heads,tags}/". If so we add a corresponding
+  refs/{heads,tags}/ prefix on the remote side.
+
+Neither worked, so we gave up. You must fully qualify the ref.
+hint: The <src> part of the refspec is a commit object.
+hint: Did you mean to create a new branch by pushing to
+hint: 'HEAD:refs/heads/origin/feature-branch'?
+error: failed to push some refs to 'https://gitlab.bincom.net:801/gasnownowv2/webapp.git'
+root@ad1114479d9a:/var/www/html/feature-branch# git branch
+* (HEAD detached from origin/feature-branch)
+  master
+root@ad1114479d9a:/var/www/html/feature-branch# git push origin HEAD:refs/heads/origin/feature-branch
+Enumerating objects: 4, done.
+Counting objects: 100% (4/4), done.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 1.07 MiB | 569.00 KiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0), pack-reused 0
+remote:
+remote: To create a merge request for origin/feature-branch, visit:
+remote:   https://gitlab.bincom.net:801/gasnownowv2/webapp/-/merge_requests/new?merge_request%5Bsource_branch%5D=origin%2Ffeature-branch
+remote:
+To https://gitlab.bincom.net:801/gasnownowv2/webapp.git
+ * [new branch]      HEAD -> origin/feature-branch
+root@ad1114479d9a:/var/www/html/feature-branch# git push origin HEAD:refs/heads/feature-branch
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0
+remote:
+remote: To create a merge request for feature-branch, visit:
+remote:   https://gitlab.bincom.net:801/gasnownowv2/webapp/-/merge_requests/new?merge_request%5Bsource_branch%5D=feature-branch
+remote:
+To https://gitlab.bincom.net:801/gasnownowv2/webapp.git
+   585f87c..a60a175  HEAD -> feature-branch
+root@ad1114479d9a:/var/www/html/feature-branch#

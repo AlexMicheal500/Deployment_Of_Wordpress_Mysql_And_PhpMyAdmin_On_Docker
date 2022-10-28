@@ -7,12 +7,12 @@ variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
     SERVER_USER: ubuntu
-    SERVER_IP: 54.88.232.13
+    SERVER_IP: 3.93.176.85
     USER_PASS: password
     MY_SQL_IMAGE: mysql:8.0.30
     WORDPRESS_IMAGE: gasnownow-$CI_COMMIT_SHA
     old_url: https://gasnownow.ng
-    dev_url: http://54.88.232.13:8080/
+    dev_url: http://3.93.176.85:8080/
 
 build:
     stage: build    
@@ -69,13 +69,14 @@ deploy:
         - eval "$(ssh-agent -s)"
         - ssh-add ~/.ssh/id_rsa
         - chmod 700 ~/.ssh
-    script:       ###########################################################################################################################      
+    script:    
+           ############################################################################################################################    
         #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker rm -f gasnownowDBCont"
         #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker rm -f gasnownow_web"
         #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker rmi $MY_SQL_IMAGE"
         #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker rmi $WORDPRESS_IMAGE"
         #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker network rm gasnownow-network"
-############################################################################################################################
+#############################################################################################################################
         - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker load --input gasnownow.tar"
         - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker network create gasnownow-network"
         - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker run -d --name gasnownow_web -p 8080:80 --network gasnownow-network -d $WORDPRESS_IMAGE"
@@ -114,20 +115,19 @@ data_sync:
         - chmod 700 ~/.ssh
     script:
         - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'rm -rf gasnownow.tar gasnownow_lpg22.sql'"
-        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'mkdir GASNOWNOWREPO'"
-        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'cp gasnownowDBupdated.sql GASNOWNOWREPO'"
-        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'cd GASNOWNOWREPO'"
         - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git --version && rm -rf .git && git init . && git checkout -b feature-branch'"
         - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git remote add origin https://gitlab.bincom.net:801/gasnownowv2/webapp.git'"
+        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git clone https://michaelalexbincom:zWE4F5vkc_H_UB5ysZZv@gitlab.bincom.net:801/gasnownowv2/webapp.git feature-branch'"
+        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'cd feature-branch && git branch -a && git checkout remotes/origin/feature-branch && ls'"
         - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git config --global user.email "michaelorukpe.bincom@gmail.com"'"
         - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git config --global user.name "michaelalexbincom"'"
-        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git config --global user.password "zWE4F5vkc_H_UB5ysZZv"'"
-        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git config --global credential.helper store'"
-        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git config --list --show-origin'"
-        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git clone https://michaelalexbincom:zWE4F5vkc_H_UB5ysZZv@gitlab.bincom.net:801/gasnownowv2/webapp.git feature-branch -o skip-ci'"
-        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git add gasnownowDBupdated.sql'"
-        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git commit -m "date"'"
-        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git branch -m master feature-branch'"
-        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git push https://michaelalexbincom:zWE4F5vkc_H_UB5ysZZv@gitlab.bincom.net:801/gasnownowv2/webapp.git feature-branch'"
-        
-
+        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git config --global user.password "zWE4F5vkc_H_UB5ysZZv"'"
+        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git config --global credential.helper store'"
+        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'git config --list --show-origin'"
+        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'cp gasnownowDBupdated.sql feature-branch'"
+        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'cd feature-branch && git add gasnownowDBupdated.sql && git commit -m "database"'"
+        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'cd feature-branch && git push -o ci.skip origin HEAD:refs/heads/feature-branch'"
+        #- ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'cd feature-branch && rm  gasnownow_lpg22.sql && git add . && git commit -m "devDatabase" && git push -o ci.skip origin HEAD:refs/heads/dev-branch'"
+        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'cd feature-branch && rm  gasnownow_lpg22.sql && git checkout remotes/origin/feature-branch && git add . && git commit -m "devDatabase"'"
+        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'cd feature-branch && git push origin -o ci.skip --delete -o origin refs/heads/dev'"
+        - ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker exec -i gasnownow_web sh -c 'cd feature-branch && git push -o ci.skip origin HEAD:refs/heads/dev'"

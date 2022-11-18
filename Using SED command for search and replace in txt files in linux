@@ -1,0 +1,10 @@
+Visit https://www.youtube.com/watch?v=6RpYGSfU7Lg to learn more.
+There are two ways
+The first is:
+$ nano test.txt 
+(Write anything inside and then do search and replace using)
+$ sed -i 's/file/cars/g' test.txt
+
+OR
+Using commas especially when operations involve url, it could give errors. So its better to use commas instead of /
+$ sed -i 's,file,cars,g' test.txt

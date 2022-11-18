@@ -8,3 +8,9 @@ $ sed -i 's/file/cars/g' test.txt
 OR
 Using commas especially when operations involve url, it could give errors. So its better to use commas instead of /
 $ sed -i 's,file,cars,g' test.txt
+
+IF WE ARE DEALING WITH VARIABLES:
+export change=$(cat old_url.txt)
+export change2=$(cat dev_url.txt)
+$ sed -i 's,$change,$change2,g' test.txt
+

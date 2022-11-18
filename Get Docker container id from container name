@@ -1,0 +1,7 @@
+Visit to https://stackoverflow.com/questions/34496882/get-docker-container-id-from-container-name
+Use the following command:
+sudo docker ps -aqf "name=containername"
+
+OR
+
+docker inspect --format="{{.Id}}" container_name

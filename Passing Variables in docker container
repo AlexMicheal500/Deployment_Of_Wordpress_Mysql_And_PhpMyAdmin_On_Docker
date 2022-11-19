@@ -1,0 +1,7 @@
+Visit https://www.youtube.com/watch?v=opIp0ADl9n0&t=3s to learn more.
+There are different ways like passing the varianle directly using --env and using a txt file.
+PASSING THE VARIABLE DIRECTLY
+docker run -d --name gasnownow_web -p 8080:80 --network gasnownow-network -d --env VAR1=10 --env VAR2=5 gasnownow:latest
+echo $VAR1 && echo VAR2
+docker run -d --name gasnownow_web -p 8080:80 --network gasnownow-network -d --env old_url=$(cat old_url.txt) --env dev_url=$(cat dev_url.txt) gasnownow:latest
+echo $old_url

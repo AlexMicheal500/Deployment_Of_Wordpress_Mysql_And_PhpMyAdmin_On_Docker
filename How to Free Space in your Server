@@ -1,0 +1,2 @@
+Clear what is consuming the space by running the following on ther server to see what is consuming the space:
+docker system prune      (that is if it is a docker container)

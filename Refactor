@@ -2,16 +2,15 @@ stages:
     - build
     - push
     - deploy
+    - data_sync
 variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
-    SERVER_USER: root
-    SERVER_IP: 139.177.200.220
+    SERVER_USER: ubuntu
+    SERVER_IP: 54.166.83.84
     USER_PASS: password
     MY_SQL_IMAGE: mysql:8.0.30
-    WORDPRESS_IMAGE: $CI_COMMIT_SHA
-    old_url: https://gasnownow.ng
-    dev_url: http://139.177.200.220:8081
+    WORDPRESS_IMAGE: gasnownow:latest
 
 
 
@@ -56,6 +55,12 @@ push:
         - scp -o StrictHostKeyChecking=no scripts/deploy_script.sh $SERVER_USER@$SERVER_IP:./
         - scp -o StrictHostKeyChecking=no old_url.txt $SERVER_USER@$SERVER_IP:./
         - scp -o StrictHostKeyChecking=no dev_url.txt $SERVER_USER@$SERVER_IP:./
+        ######## Uncomment the lines below to install and enable docker ###############
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo apt-get update -y"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo apt-get install docker.io -y"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo docker -v"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo systemctl enable --now docker"
+        
 
 
 deploy:
@@ -104,6 +109,3 @@ deploy:
         - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker exec -i gasnownow_web sh -c 'rm -rf /usr/local/bin/wp/wp-cli.phar'"
 
         
-
-
-

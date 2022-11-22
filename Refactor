@@ -1,0 +1,109 @@
+stages:
+    - build
+    - push
+    - deploy
+variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    SERVER_USER: root
+    SERVER_IP: 139.177.200.220
+    USER_PASS: password
+    MY_SQL_IMAGE: mysql:8.0.30
+    WORDPRESS_IMAGE: $CI_COMMIT_SHA
+    old_url: https://gasnownow.ng
+    dev_url: http://139.177.200.220:8081
+
+
+
+build:
+    stage: build    
+    image: docker:20.10.13-alpine3.15
+    services:
+        - docker:20.10.13-dind-alpine3.15
+    script:
+        - docker build -t $WORDPRESS_IMAGE .
+        - docker save $WORDPRESS_IMAGE > gasnownow.tar
+
+    artifacts:
+        expire_in: 1 week
+        paths:
+            - gasnownow.tar
+
+
+push:
+    stage: push
+    image: docker:20.10.13-alpine3.15
+    services:
+        - docker:20.10.13-dind-alpine3.15
+    before_script:
+     
+        - 'which ssh-agent || ( apk update && apk add openssh-client )'
+        - mkdir -p ~/.ssh
+        - touch ~/.ssh/id_rsa
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        - chmod 600 ~/.ssh/id_rsa
+        - echo -e "Host *\nStrictHostKeyChecking no\n" > ~/.ssh/config
+        - eval "$(ssh-agent -s)"
+        - ssh-add ~/.ssh/id_rsa
+        - chmod 700 ~/.ssh
+
+    script:
+        - scp -o StrictHostKeyChecking=no gasnownow.tar $SERVER_USER@$SERVER_IP:./
+        - scp -o StrictHostKeyChecking=no gasnownow.sql $SERVER_USER@$SERVER_IP:./
+        - scp -o StrictHostKeyChecking=no scripts/docker_installation_script.sh $SERVER_USER@$SERVER_IP:./
+        - scp -o StrictHostKeyChecking=no scripts/build_script.sh $SERVER_USER@$SERVER_IP:./
+        - scp -o StrictHostKeyChecking=no scripts/data_sync_script.sh $SERVER_USER@$SERVER_IP:./
+        - scp -o StrictHostKeyChecking=no scripts/deploy_script.sh $SERVER_USER@$SERVER_IP:./
+        - scp -o StrictHostKeyChecking=no old_url.txt $SERVER_USER@$SERVER_IP:./
+        - scp -o StrictHostKeyChecking=no dev_url.txt $SERVER_USER@$SERVER_IP:./
+
+
+deploy:
+  #image: alpine
+    stage: deploy
+    image: docker:20.10.13-alpine3.15
+    services:
+        - docker:20.10.13-dind-alpine3.15
+    before_script:
+     
+        - 'which ssh-agent || ( apk update && apk add openssh-client )'
+        - mkdir -p ~/.ssh
+        - touch ~/.ssh/id_rsa
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        - chmod 600 ~/.ssh/id_rsa
+        - echo -e "Host *\nStrictHostKeyChecking no\n" > ~/.ssh/config
+        - eval "$(ssh-agent -s)"
+        - ssh-add ~/.ssh/id_rsa
+        - chmod 700 ~/.ssh
+
+
+    script:
+        ########################################################################################################################       
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop gasnownowDBCont && sudo docker rm gasnownowDBCont"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker stop gasnownow_web && sudo docker rm gasnownow_web"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker rmi gasnownow"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker network rm gasnownow-network"
+########################################################################################################################
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker load --input gasnownow.tar"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker network create gasnownow-network"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d --name gasnownow_web -p 8080:80 --network gasnownow-network -d --env old_url=$(cat old_url.txt) --env dev_url=$(cat dev_url.txt) gasnownow:latest"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run --name gasnownowDBCont -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=gasnownowDB --network gasnownow-network -d mysql:8.0.30" 
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sleep 20"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker exec -i gasnownowDBCont  sh -c ' mysql -uroot -ppassword gasnownowDB' < gasnownow.sql"
+##########################################################################################################################
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker cp old_url.txt gasnownow_web:/var/www/html/old_url.txt"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker cp dev_url.txt gasnownow_web:/var/www/html/dev_url.txt"
+  ########################################################################################################################
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker exec -i gasnownow_web sh -c 'curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar'"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker exec -i gasnownow_web sh -c 'chmod +x wp-cli.phar'"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker exec -i gasnownow_web sh -c 'mv wp-cli.phar /usr/local/bin/wp'"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker exec -i gasnownow_web sh -c 'wp db export gasnownow_export.sql --exclude_tables=wp_users,wp_options,wp_commentsmeta,wp_comment --allow-root'"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker exec -i gasnownow_web sh -c 'sed -i "s,$old_url,$dev_url,g" "gasnownow_export.sql"'"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker exec -i gasnownow_web sh -c 'echo $old_url'"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker exec -i gasnownow_web sh -c 'echo $dev_url'"
+        - ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker exec -i gasnownow_web sh -c 'rm -rf /usr/local/bin/wp/wp-cli.phar'"
+
+        
+
+
+

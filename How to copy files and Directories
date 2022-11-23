@@ -1,0 +1,33 @@
+Learn using the link https://vitux.com/how-to-use-rsync-command-to-copy-data/#:~:text=1%20Using%20Rsync%202%20Copy%20files%20and%20directories,6%20View%20progress.%20...%207%20Exclude%20files.%20
+1. INSTALLATION OF RSYNC
+$ apt install rsync
+2. USING RSYNC
+$ rsync [option] [source] [destination]
+
+Some of the general options used with rsync commands:
+
+-v : verbose
+-a : archive mode, it allows copying files recursively and preserves symbolic links, file permissions, user & group ownerships and timestamps
+-z : compresses data
+-h : human-readable, it output numbers in a human-readable format
+–max-size=SIZE, transfer files with the specified minimum SIZE
+–min-size=SIZE, transfer files with the specified maximum SIZE
+
+Copy files and directories to the local server
+Copy files locally
+$ rsync -zvh /home/tin/Downloads/*.jpg /home/tin/Documents
+Copy directories locally
+$ rsync -zavh /home/tin/Downloads/ /home/tin/Documents
+Copy files to a remote server
+$ rsync [options] [local path] [user]@[remote server]:[remote path]
+Copying Files Based on Maximum Size
+$ rsync --max-size=”” [source] [destination]
+$ rsync --max-size=4000k /home/tin/Downloads/*.iso /home/tin/Documents/
+Copying Files Based on Minimum Size
+$ rsync --min-size=”” [source] [destination]
+$ rsync --min-size=2M /home/tin/Downloads/*.iso /home/tin/Documents/
+View progress
+$ rsync --progress [source] [destination]
+$ rsync --progress /home/tin/Downloads/VTS_03_1.VOB /home/tin/Documents
+Exclude files
+rsync -zavh --exclude="*.pdf" /home/tin/Downloads/ /home/tin/Documents

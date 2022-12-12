@@ -1,0 +1,2 @@
+Go to inspect of the browser and go to console. Then check the link of the red errors and see if you have the old ip address and port.
+If you do, do a search and replace to fix it.

@@ -1,0 +1,1 @@
+sudo docker exec -i gasnownowDBCont_1 sh -c 'mysql -uroot -ppassword -e "create database gasnownowDB_1;"'

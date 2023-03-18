@@ -16,3 +16,5 @@ The reason for database connection error in the images below was because sed com
 ![image](https://user-images.githubusercontent.com/99332618/226101032-88e2380e-6b0f-45ec-b5ef-e1d812c01924.png)
 The solution is to change the values of the variables 
 ![image](https://user-images.githubusercontent.com/99332618/226101071-5b05f19e-8f08-4fbb-a637-97a9bd1051f3.png)
+![image](https://user-images.githubusercontent.com/99332618/226110799-0eb21710-2d8a-46ad-b94c-c01ad7f742ff.png)
+

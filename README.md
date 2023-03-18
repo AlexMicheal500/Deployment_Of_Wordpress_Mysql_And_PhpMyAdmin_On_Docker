@@ -10,3 +10,9 @@ you are setting it as a variable, you make it a file
 ![image](https://user-images.githubusercontent.com/99332618/211559911-877904eb-0a8a-4f8e-a6c6-57da0e4dfd37.png)
 
 ![image](https://user-images.githubusercontent.com/99332618/213138311-56dd4cb2-c5dd-47ba-8858-df4c88192fef.png)
+
+The reason for database connection error in the images below was because sed comomand was having conflict with replacing names properly.
+![image](https://user-images.githubusercontent.com/99332618/226101023-57c4a0cb-7283-42fc-913f-95bdfaa0588c.png)
+![image](https://user-images.githubusercontent.com/99332618/226101032-88e2380e-6b0f-45ec-b5ef-e1d812c01924.png)
+The solution is to change the values of the variables 
+![image](https://user-images.githubusercontent.com/99332618/226101071-5b05f19e-8f08-4fbb-a637-97a9bd1051f3.png)
